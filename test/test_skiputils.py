@@ -42,7 +42,7 @@ PLAYBOOK_WITH_NOQA = """\
 )
 def test_get_rule_skips_from_line(line: str, expected: str) -> None:
     """Validate get_rule_skips_from_line."""
-    v = get_rule_skips_from_line(line)
+    v = get_rule_skips_from_line(line, lintable=Lintable(""))
     assert v == [expected]
 
 

@@ -2,6 +2,6 @@
 - name: Example
   hosts: localhost
   tasks:
-    - name: include extra tasks
+    - name: include extra tasks # noqa: 102
       ansible.builtin.include_tasks:
         file: /dev/null

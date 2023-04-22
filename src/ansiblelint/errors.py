@@ -9,6 +9,10 @@ from ansiblelint.config import options
 from ansiblelint.file_utils import Lintable, normpath
 
 
+class LintWarning(Warning):
+    """Used by linter."""
+
+
 class StrictModeError(RuntimeError):
     """Raise when we encounter a warning in strict mode."""
 
