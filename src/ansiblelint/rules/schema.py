@@ -3,13 +3,17 @@ from __future__ import annotations
 
 import logging
 import sys
-from typing import Any
+from typing import TYPE_CHECKING
 
 from ansiblelint.errors import MatchError
 from ansiblelint.file_utils import Lintable
 from ansiblelint.rules import AnsibleLintRule
 from ansiblelint.schemas.__main__ import JSON_SCHEMAS
 from ansiblelint.schemas.main import validate_file_schema
+
+if TYPE_CHECKING:
+    from ansiblelint.utils import Task
+
 
 _logger = logging.getLogger(__name__)
 
@@ -56,7 +60,7 @@ class ValidateSchemaRule(AnsibleLintRule):
 
     def matchtask(
         self,
-        task: dict[str, Any],
+        task: Task,
         file: Lintable | None = None,
     ) -> bool | str | MatchError | list[MatchError]:
         result = []

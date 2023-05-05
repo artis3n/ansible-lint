@@ -2,12 +2,13 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from ansiblelint.rules import AnsibleLintRule
 
 if TYPE_CHECKING:
     from ansiblelint.file_utils import Lintable
+    from ansiblelint.utils import Task
 
 
 class IgnoreErrorsRule(AnsibleLintRule):
@@ -26,13 +27,14 @@ class IgnoreErrorsRule(AnsibleLintRule):
 
     def matchtask(
         self,
-        task: dict[str, Any],
+        task: Task,
         file: Lintable | None = None,
     ) -> bool | str:
+        tsk = task.normalized_task
         if (
-            task.get("ignore_errors")
-            and task.get("ignore_errors") != "{{ ansible_check_mode }}"
-            and not task.get("register")
+            tsk.get("ignore_errors")
+            and tsk.get("ignore_errors") != "{{ ansible_check_mode }}"
+            and not tsk.get("register")
         ):
             return True
 

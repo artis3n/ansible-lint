@@ -16,10 +16,10 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from ansiblelint.rules import AnsibleLintRule
-from ansiblelint.utils import convert_to_boolean
+from ansiblelint.utils import Task, convert_to_boolean
 
 if TYPE_CHECKING:
     from ansiblelint.file_utils import Lintable
@@ -39,26 +39,27 @@ class NoLogPasswordsRule(AnsibleLintRule):
 
     def matchtask(
         self,
-        task: dict[str, Any],
+        task: Task,
         file: Lintable | None = None,
     ) -> bool | str:
-        if task["action"]["__ansible_module_original__"] == "ansible.builtin.user" and (
-            task["action"].get("password_lock") and not task["action"].get("password")
+        tsk = task.normalized_task
+        if tsk["action"]["__ansible_module_original__"] == "ansible.builtin.user" and (
+            tsk["action"].get("password_lock") and not tsk["action"].get("password")
         ):
             has_password = False
         else:
-            for param in task["action"]:
+            for param in tsk["action"]:
                 if "password" in param:
                     has_password = True
                     break
             else:
                 has_password = False
 
-        has_loop = [key for key in task if key.startswith("with_") or key == "loop"]
+        has_loop = [key for key in tsk if key.startswith("with_") or key == "loop"]
         # No no_log and no_log: False behave the same way
         # and should return a failure (return True), so we
         # need to invert the boolean
-        no_log = task.get("no_log", False)
+        no_log = tsk.get("no_log", False)
 
         if (
             isinstance(no_log, str)
